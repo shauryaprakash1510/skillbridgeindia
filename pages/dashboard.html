@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SKILLBRIDGE INDIA</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body style="background-color: #F4F7F9;">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo" style="font-size: 1.2rem;">
+                    SKILLBRIDGE <span>INDIA</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active">
+                    <span>📊</span> Overview
+                </a>
+                <a href="#" class="sidebar-link">
+                    <span>🔍</span> Job Intelligence
+                </a>
+                <a href="#" class="sidebar-link">
+                    <span>🛣️</span> Career Maps
+                </a>
+                <a href="#" class="sidebar-link">
+                    <span>🎓</span> My Learning
+                </a>
+                <a href="#" class="sidebar-link">
+                    <span>📜</span> Policy Reports
+                </a>
+                <a href="#" class="sidebar-link">
+                    <span>⚙️</span> Settings
+                </a>
+                <a href="#" onclick="api.logout()" class="sidebar-link" style="color: #ef4444; margin-top: auto;">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="mobile-menu-btn" style="display: none; font-size: 1.5rem; cursor: pointer;">
+                    ☰
+                </div>
+                <h2 style="font-size: 1.25rem;">Dashboard Overview</h2>
+                <div class="flex items-center gap-4">
+                    <span id="user-greeting" style="font-weight: 500;">Welcome</span>
+                    <div id="user-initials"
+                        style="width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                        U</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="stat-card-grid">
+                <!-- Card 1: Skill Gaps -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Identified Skill Gaps</h3>
+                    <div class="value" id="stat-skillGaps">0</div>
+                    <p id="label-skillGaps" style="font-size: 0.85rem; color: var(--secondary-color); margin-top: 5px;">
+                        ...</p>
+                </div>
+
+                <!-- Card 2: Recommended Jobs -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Recommended Jobs</h3>
+                    <div class="value" id="stat-recommendedJobs">0</div>
+                    <p id="label-recommendedJobs"
+                        style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">...</p>
+                </div>
+
+                <!-- Card 3: Saved Courses -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Pending Courses</h3>
+                    <div class="value" id="stat-pendingCourses">0</div>
+                    <p id="label-pendingCourses"
+                        style="font-size: 0.85rem; color: var(--accent-color); margin-top: 5px;">...</p>
+                </div>
+
+                <!-- Card 4: Upcoming Events -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Upcoming Events</h3>
+                    <div class="value" id="stat-upcomingEvents">0</div>
+                    <p id="label-upcomingEvents" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">
+                        ...</p>
+                </div>
+
+                <!-- Card 5: Mentors -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Available Mentors</h3>
+                    <div class="value" id="stat-availableMentors">0</div>
+                    <p id="label-availableMentors"
+                        style="font-size: 0.85rem; color: var(--secondary-color); margin-top: 5px;">...</p>
+                </div>
+
+                <!-- Card 6: Profile Views -->
+                <div class="stat-card-big animate-on-scroll">
+                    <h3>Profile Views</h3>
+                    <div class="value" id="stat-profileViews">0</div>
+                    <p id="label-profileViews" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">
+                        ...</p>
+                </div>
+            </div>
+
+            <!-- Content Placeholder -->
+            <div class="card animate-on-scroll">
+                <h3 class="feature-title">Recent Activity</h3>
+                <p class="feature-desc">You viewed "Data Science for Policymakers" course yesterday.</p>
+                <div
+                    style="height: 200px; background: #f9fafb; margin-top: 1rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                    Chart/Activity Visualization Placeholder
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Check Auth
+        const user = api.requireAuth();
+
+        // Update UI with User Info
+        if (user) {
+            document.getElementById('user-greeting').textContent = `Welcome, ${user.name.split(' ')[0]}`;
+            const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('user-initials').textContent = initials;
+        }
+
+        // Fetch Stats
+        async function loadStats() {
+            const stats = await api.getDashboardStats();
+            if (stats) {
+                // Helper to update
+                const update = (key) => {
+                    if (stats[key]) {
+                        document.getElementById(`stat-${key}`).textContent = stats[key].value;
+                        document.getElementById(`label-${key}`).textContent = stats[key].label;
+                    }
+                };
+
+                update('skillGaps');
+                update('recommendedJobs');
+                update('pendingCourses');
+                update('upcomingEvents');
+                update('availableMentors');
+                update('profileViews');
+            }
+        }
+
+        loadStats();
+
+        // Simple Sidebar Interaction specific to Dashboard
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

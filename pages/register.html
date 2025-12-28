@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SKILLBRIDGE INDIA</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                SKILLBRIDGE <span>INDIA</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Toggle navigation">
+                ☰
+            </button>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="login.html" class="btn btn-outline">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-wrapper" style="padding: 4rem 2rem;">
+        <div class="auth-card">
+            <h2 class="section-title" style="margin-bottom: 0.5rem; text-align: left; font-size: 1.75rem;">Create
+                Account</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-muted);">Join the National Skill Ecosystem</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullname" class="form-label">Full Name</label>
+                    <input type="text" id="fullname" class="form-input" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="e.g. user@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category" class="form-label">User Category</label>
+                    <select id="category" class="form-select" required>
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="student">Student</option>
+                        <option value="job_seeker">Job Seeker</option>
+                        <option value="training_institute">Training Institute</option>
+                        <option value="employer">Employer</option>
+                        <option value="policymaker">Policymaker</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirm-password" class="form-input" placeholder="Confirm your password"
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-secondary" style="width: 100%;">Register</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+    <div id="error-message" style="color: red; text-align: center; margin-top: 1rem; display: none;"></div>
+    <script src="../js/api.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const category = document.getElementById('category').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorMsg = document.getElementById('error-message');
+
+            if (password !== confirmPassword) {
+                errorMsg.textContent = "Passwords do not match!";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const result = await api.register(fullname, email, password, category);
+            if (result.success) {
+                alert('Registration successful! Please login.');
+                window.location.href = 'login.html';
+            } else {
+                errorMsg.textContent = result.message;
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>
